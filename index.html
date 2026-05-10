@@ -7,30 +7,18 @@
     <!-- Fuentes y Librerías -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Librería jsPDF + html2canvas para PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #eef2fc 0%, #ffffff 100%);
             font-family: 'Inter', sans-serif;
             padding: 2rem 1.5rem;
             color: #1e293b;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Encabezado */
+        .container { max-width: 1400px; margin: 0 auto; }
         .header {
             display: flex;
             justify-content: space-between;
@@ -40,31 +28,8 @@
             padding-bottom: 1rem;
             border-bottom: 3px solid #2a419f;
         }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .logo-placeholder {
-            width: 55px;
-            height: 55px;
-            background: #2a419f;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(42,65,159,0.2);
-        }
-        .logo-placeholder i {
-            font-size: 30px;
-            color: white;
-        }
-        /* Cuando tengas tu logo real, reemplaza .logo-placeholder por img */
-        .brand img {
-            height: 55px;
-            width: auto;
-            object-fit: contain;
-        }
+        .brand { display: flex; align-items: center; gap: 15px; }
+        .brand img { height: 55px; width: auto; object-fit: contain; }
         .brand h1 {
             margin: 0;
             font-size: 1.8rem;
@@ -73,34 +38,22 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
         }
-        .brand p {
-            margin: 0;
-            color: #4a5b8c;
-            font-weight: 500;
-            font-size: 0.85rem;
-        }
+        .brand p { margin: 0; color: #4a5b8c; font-weight: 500; font-size: 0.85rem; }
         .badge {
             background: #d1e1fa;
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             color: #2a419f;
             font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-
-        /* Tarjeta principal */
         .card {
             background: white;
             border-radius: 28px;
             box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
             overflow: hidden;
             margin-bottom: 2rem;
-            transition: all 0.2s;
         }
-
         .card-header {
             background: #f8fafd;
             padding: 1.2rem 1.8rem;
@@ -111,14 +64,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        .card-header h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #2a419f;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
+        .card-header h2 { font-size: 1.4rem; font-weight: 600; color: #2a419f; display: flex; align-items: center; gap: 0.6rem; }
         .type-selector {
             display: flex;
             gap: 1rem;
@@ -133,27 +79,12 @@
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.85rem;
             cursor: pointer;
-            transition: 0.2s;
             color: #1e2f5e;
         }
-        .type-btn.active {
-            background: #2a419f;
-            color: white;
-            box-shadow: 0 4px 10px rgba(42,65,159,0.3);
-        }
-
-        /* Tabla responsiva */
-        .table-wrapper {
-            overflow-x: auto;
-            padding: 0 1rem 1rem 1rem;
-        }
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
+        .type-btn.active { background: #2a419f; color: white; box-shadow: 0 4px 10px rgba(42,65,159,0.3); }
+        .table-wrapper { overflow-x: auto; padding: 0 1rem 1rem 1rem; }
+        .items-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         .items-table th {
             text-align: left;
             padding: 1rem 0.8rem;
@@ -162,43 +93,26 @@
             font-weight: 600;
             border-bottom: 2px solid #d1e1fa;
         }
-        .items-table td {
-            padding: 0.9rem 0.8rem;
-            border-bottom: 1px solid #e9eff8;
-            vertical-align: middle;
-        }
-        .item-desc {
-            min-width: 200px;
-        }
-        input, .fake-input {
+        .items-table td { padding: 0.9rem 0.8rem; border-bottom: 1px solid #e9eff8; vertical-align: middle; }
+        input {
             width: 100%;
             padding: 0.6rem 0.8rem;
             border-radius: 14px;
             border: 1px solid #cbdff5;
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
-            transition: 0.2s;
-            background: white;
         }
-        input:focus {
-            outline: none;
-            border-color: #2a419f;
-            box-shadow: 0 0 0 3px rgba(42,65,159,0.15);
-        }
+        input:focus { outline: none; border-color: #2a419f; box-shadow: 0 0 0 3px rgba(42,65,159,0.15); }
         .delete-btn {
             background: none;
             border: none;
             font-size: 1.2rem;
             color: #a0b8da;
             cursor: pointer;
-            transition: 0.2s;
             padding: 0.3rem 0.6rem;
             border-radius: 30px;
         }
-        .delete-btn:hover {
-            color: #e11d48;
-            background: #fee2e2;
-        }
+        .delete-btn:hover { color: #e11d48; background: #fee2e2; }
         .add-row-btn {
             margin: 0.8rem 1rem 1.5rem 1rem;
             background: #ffffff;
@@ -208,17 +122,11 @@
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
-        .add-row-btn:hover {
-            background: #eef3ff;
-            border-style: solid;
-        }
-
-        /* Panel totales */
+        .add-row-btn:hover { background: #eef3ff; border-style: solid; }
         .totals-panel {
             background: #f9fcff;
             border-radius: 24px;
@@ -230,29 +138,10 @@
             justify-content: flex-end;
             gap: 2rem;
         }
-        .totals-box {
-            text-align: right;
-            min-width: 200px;
-        }
-        .totals-box p {
-            margin: 0.4rem 0;
-        }
-        .subtotal, .igv, .total-final {
-            font-weight: 600;
-        }
-        .total-final {
-            font-size: 1.6rem;
-            color: #2a419f;
-            border-top: 2px solid #cde0fc;
-            margin-top: 0.2rem;
-            padding-top: 0.5rem;
-        }
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin: 0 1.5rem 1.8rem 1.5rem;
-        }
+        .totals-box { text-align: right; min-width: 200px; }
+        .totals-box p { margin: 0.4rem 0; }
+        .total-final { font-size: 1.6rem; color: #2a419f; border-top: 2px solid #cde0fc; margin-top: 0.2rem; padding-top: 0.5rem; font-weight: 600; }
+        .actions { display: flex; justify-content: flex-end; gap: 1rem; margin: 0 1.5rem 1.8rem 1.5rem; }
         .btn-pdf {
             background: #2a419f;
             color: white;
@@ -261,61 +150,23 @@
             border-radius: 60px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-        .btn-pdf:hover {
-            background: #1f327a;
-            transform: translateY(-1px);
-        }
-        .btn-secondary {
-            background: #eef2fc;
-            color: #2a419f;
-            border: 1px solid #c5d7f5;
-        }
-        footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #6c86a8;
-            margin-top: 2rem;
-        }
-        @media (max-width: 750px) {
-            body { padding: 1rem; }
-            .totals-panel { justify-content: center; text-align: center; }
-            .items-table th, .items-table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
-            .brand { gap: 10px; }
-            .logo-placeholder { width: 45px; height: 45px; }
-            .logo-placeholder i { font-size: 24px; }
-            .brand h1 { font-size: 1.3rem; }
-        }
-        .unit-price-display {
-            font-weight: 600;
-            color: #2c3e66;
-        }
-        /* Instrucción para el logo */
-        .logo-note {
-            font-size: 0.7rem;
-            color: #8ba0bc;
-            margin-top: 5px;
-            text-align: center;
-        }
+        .btn-pdf:hover { background: #1f327a; transform: translateY(-1px); }
+        footer { text-align: center; font-size: 0.75rem; color: #6c86a8; margin-top: 2rem; }
+        @media (max-width: 750px) { body { padding: 1rem; } .brand h1 { font-size: 1.3rem; } }
+        .unit-price-display { font-weight: 600; color: #2c3e66; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <div class="brand">
-            <!-- === ESPACIO PARA TU LOGO === -->
-            <img src="logo.jpg" alt="Luthiplast" style="height: 55px; width: auto; object-fit: contain;">
-    
-            <!-- FIN DEL ESPACIO PARA LOGO -->
-            
+            <img src="logo.png" alt="Luthiplast" style="height: 55px;" onerror="this.style.display='none'">
             <div>
-                <h1>LUTHIPLAST</h1>
+                <h1>IMPORTACIONES LUTHIPLAST EIRL</h1>
                 <p>Instalación profesional de ventanas y mamparas de aluminio</p>
             </div>
         </div>
@@ -328,79 +179,60 @@
         <div class="card-header">
             <h2><i class="fas fa-calculator"></i> Presupuesto detallado</h2>
             <div class="type-selector" id="typeSelector">
-                <button class="type-btn active" data-type="unit">📦 Por Unidad (precio x unidad)</button>
-                <button class="type-btn" data-type="m2">📐 Por Metro cuadrado (largo × ancho)</button>
+                <button class="type-btn active" data-type="unit">📦 Por Unidad</button>
+                <button class="type-btn" data-type="m2">📐 Por Metro cuadrado</button>
             </div>
         </div>
-
         <div class="table-wrapper">
             <table class="items-table" id="itemsTable">
                 <thead>
                     <tr>
-                        <th># Ítem</th>
-                        <th>Descripción</th>
-                        <th id="colSpecific1">Precio Unitario (S/)</th>
-                        <th id="colSpecific2">Cantidad / Medidas</th>
-                        <th id="colTotalLabel">Total Ítem (S/)</th>
-                        <th style="width: 50px;"></th>
+                        <th>#</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th id="colSpecific1">PRECIO UNITARIO</th>
+                        <th id="colSpecific2">CANTIDAD</th>
+                        <th>SUBTOTAL</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- Filas dinámicas -->
-                </tbody>
+                <tbody id="tableBody"></tbody>
             </table>
         </div>
         <div style="padding: 0 1rem 0 1rem;">
             <button class="add-row-btn" id="addItemBtn"><i class="fas fa-plus-circle"></i> Agregar ítem</button>
         </div>
-
-        <!-- Totales -->
         <div class="totals-panel">
             <div class="totals-box">
-                <p><strong>Subtotal (S/)</strong> <span id="subtotalVal">0.00</span></p>
-                <p><strong>IGV (18%)</strong> <span id="igvVal">0.00</span></p>
-                <p class="total-final"><strong>TOTAL (S/)</strong> <span id="totalVal">0.00</span></p>
+                <p><strong>SUBTOTAL</strong> <span id="subtotalVal">S/ 0.00</span></p>
+                <p><strong>I.G.V. (18%)</strong> <span id="igvVal">S/ 0.00</span></p>
+                <p class="total-final"><strong>TOTAL</strong> <span id="totalVal">S/ 0.00</span></p>
             </div>
         </div>
         <div class="actions">
             <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> DESCARGAR COTIZACIÓN PDF</button>
         </div>
     </div>
-    <footer>
-        <i class="fas fa-balance-scale"></i> Cotización válida con IGV 18% | Precios referenciales · LUTHIPLAST
-    </footer>
+    <footer>Magadalena Del Mar - Lima | Web: www.luthiplast.com | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com</footer>
 </div>
 
 <script>
-    // -------- Variables globales ----------
-    let cotizacionType = "unit";   // 'unit' o 'm2'
-    let items = [];                // almacena cada item: { id, desc, tipoDatos }
-
+    let cotizacionType = "unit";
+    let items = [];
     let nextId = 1;
 
-    // ---------- Helper: recalcular todos los totales y actualizar tabla ----------
     function recalcAll() {
-        // recalcular el total de cada item (campo itemTotal)
         items.forEach(item => {
             if (item.tipo === "unit") {
-                // unit: precio unitario * cantidad
                 let precioUnit = parseFloat(item.precioUnitario) || 0;
                 let cantidad = parseFloat(item.cantidad) || 0;
                 item.itemTotal = precioUnit * cantidad;
-                // guardamos para visualización
-                item.precioMostrado = precioUnit;
-                item.cantidadMostrada = cantidad;
-                item.itm2Area = null;
-            } 
-            else if (item.tipo === "m2") {
-                // m2: largo * ancho = m2, luego * precioM2
+            } else if (item.tipo === "m2") {
                 let largo = parseFloat(item.largo) || 0;
                 let ancho = parseFloat(item.ancho) || 0;
                 let m2 = largo * ancho;
                 let precioM2 = parseFloat(item.precioM2) || 0;
                 item.itemTotal = m2 * precioM2;
                 item.m2Calculado = m2;
-                item.precioMostrado = precioM2;
                 item.cantidadMostrada = `${largo}m × ${ancho}m = ${m2.toFixed(2)} m²`;
             }
         });
@@ -408,259 +240,138 @@
         updateTotals();
     }
 
-    // actualizar subtotal, IGV, total
     function updateTotals() {
         let subtotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
         let igv = subtotal * 0.18;
         let total = subtotal + igv;
-        document.getElementById("subtotalVal").innerText = subtotal.toFixed(2);
-        document.getElementById("igvVal").innerText = igv.toFixed(2);
-        document.getElementById("totalVal").innerText = total.toFixed(2);
+        document.getElementById("subtotalVal").innerText = `S/ ${subtotal.toFixed(2)}`;
+        document.getElementById("igvVal").innerText = `S/ ${igv.toFixed(2)}`;
+        document.getElementById("totalVal").innerText = `S/ ${total.toFixed(2)}`;
     }
 
-    // cambiar columnas según tipo de cotización (dinámico en cabecera)
     function updateHeaderByType() {
         const colSpecific1 = document.getElementById("colSpecific1");
         const colSpecific2 = document.getElementById("colSpecific2");
-        const colTotalLabel = document.getElementById("colTotalLabel");
         if (cotizacionType === "unit") {
-            colSpecific1.innerText = "Precio Unitario (S/)";
-            colSpecific2.innerText = "Cantidad (unidades)";
-            colTotalLabel.innerText = "Total Ítem (S/)";
+            colSpecific1.innerText = "PRECIO UNITARIO";
+            colSpecific2.innerText = "CANTIDAD";
         } else {
-            colSpecific1.innerText = "Precio m² (S/)";
-            colSpecific2.innerText = "Largo (m) × Ancho (m) → m²";
-            colTotalLabel.innerText = "Total Ítem (S/)";
+            colSpecific1.innerText = "PRECIO m²";
+            colSpecific2.innerText = "MEDIDAS (L×A) → m²";
         }
-        // forzar re-render
         renderTable();
     }
 
-    // Renderizar tabla completa desde el array items
     function renderTable() {
         const tbody = document.getElementById("tableBody");
         tbody.innerHTML = "";
         if (items.length === 0) {
-            // fila vacía elegante
             const emptyRow = document.createElement("tr");
-            emptyRow.innerHTML = `<td colspan="6" style="text-align:center; padding:2rem; color:#7b8eac;">➕ Haz clic en "Agregar ítem" para comenzar la cotización</td>`;
+            emptyRow.innerHTML = `<td colspan="6" style="text-align:center; padding:2rem;">➕ Haz clic en "Agregar ítem"</td>`;
             tbody.appendChild(emptyRow);
             return;
         }
-
         items.forEach((item, idx) => {
             const row = document.createElement("tr");
-            const itemNumber = idx + 1;
-            // Celda Ítem
-            const tdNum = document.createElement("td");
-            tdNum.innerText = itemNumber;
-            tdNum.style.fontWeight = "600";
-            row.appendChild(tdNum);
+            row.innerHTML = `
+                <td style="font-weight:600;">${idx + 1}</td>
+                <td><input type="text" value="${item.descripcion || ''}" placeholder="Descripción" class="desc-input" data-id="${item.id}"></td>
+                <td><input type="number" step="0.01" value="${item.tipo === 'unit' ? (item.precioUnitario || '') : (item.precioM2 || '')}" placeholder="0.00" class="price-input" data-id="${item.id}"></td>
+                <td id="cell-${item.id}"></td>
+                <td><span class="unit-price-display">S/ ${(item.itemTotal || 0).toFixed(2)}</span></td>
+                <td><button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button></td>
+            `;
+            tbody.appendChild(row);
             
-            // Celda Descripción (editable con input)
-            const tdDesc = document.createElement("td");
-            const descInput = document.createElement("input");
-            descInput.type = "text";
-            descInput.value = item.descripcion || "";
-            descInput.placeholder = "Ej: Ventana corrediza 2 hojas";
-            descInput.classList.add("item-desc-input");
-            descInput.style.width = "100%";
-            descInput.addEventListener("change", (e) => {
-                item.descripcion = e.target.value;
-                renderTable();
+            const descInput = row.querySelector('.desc-input');
+            descInput.addEventListener('change', (e) => { item.descripcion = e.target.value; });
+            
+            const priceInput = row.querySelector('.price-input');
+            priceInput.addEventListener('change', (e) => {
+                if (item.tipo === 'unit') item.precioUnitario = parseFloat(e.target.value) || 0;
+                else item.precioM2 = parseFloat(e.target.value) || 0;
+                recalcAll();
             });
-            tdDesc.appendChild(descInput);
-            row.appendChild(tdDesc);
             
-            // Tercera columna: precio unitario o precio m²
-            const tdPrice = document.createElement("td");
-            if (cotizacionType === "unit") {
-                const priceInput = document.createElement("input");
-                priceInput.type = "number";
-                priceInput.step = "0.01";
-                priceInput.value = item.precioUnitario !== undefined ? item.precioUnitario : "";
-                priceInput.placeholder = "Precio x unidad";
-                priceInput.addEventListener("change", (e) => {
-                    item.precioUnitario = parseFloat(e.target.value) || 0;
-                    recalcAll();
-                });
-                tdPrice.appendChild(priceInput);
-            } else {
-                const priceInput = document.createElement("input");
-                priceInput.type = "number";
-                priceInput.step = "0.01";
-                priceInput.value = item.precioM2 !== undefined ? item.precioM2 : "";
-                priceInput.placeholder = "S/ por m²";
-                priceInput.addEventListener("change", (e) => {
-                    item.precioM2 = parseFloat(e.target.value) || 0;
-                    recalcAll();
-                });
-                tdPrice.appendChild(priceInput);
-            }
-            row.appendChild(tdPrice);
+            const deleteBtn = row.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                items = items.filter(i => i.id !== item.id);
+                recalcAll();
+            });
             
-            // Cuarta columna: según tipo
-            const tdMeasure = document.createElement("td");
-            if (cotizacionType === "unit") {
-                const cantInput = document.createElement("input");
-                cantInput.type = "number";
-                cantInput.step = "1";
-                cantInput.min = "0";
-                cantInput.value = item.cantidad !== undefined ? item.cantidad : 1;
-                cantInput.placeholder = "Unidades";
-                cantInput.addEventListener("change", (e) => {
+            const cellMeasure = document.getElementById(`cell-${item.id}`);
+            if (item.tipo === 'unit') {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.step = '1';
+                input.value = item.cantidad || 1;
+                input.placeholder = 'Unidades';
+                input.addEventListener('change', (e) => {
                     item.cantidad = parseFloat(e.target.value) || 0;
                     recalcAll();
                 });
-                tdMeasure.appendChild(cantInput);
+                cellMeasure.appendChild(input);
             } else {
-                // layout para largo y ancho
-                const flexDiv = document.createElement("div");
-                flexDiv.style.display = "flex";
-                flexDiv.style.gap = "8px";
-                flexDiv.style.alignItems = "center";
-                flexDiv.style.flexWrap = "wrap";
-                const largoInput = document.createElement("input");
-                largoInput.type = "number";
-                largoInput.step = "0.01";
-                largoInput.placeholder = "Largo (m)";
-                largoInput.value = item.largo !== undefined ? item.largo : "";
-                largoInput.style.width = "45%";
-                const anchoInput = document.createElement("input");
-                anchoInput.type = "number";
-                anchoInput.step = "0.01";
-                anchoInput.placeholder = "Ancho (m)";
-                anchoInput.value = item.ancho !== undefined ? item.ancho : "";
-                anchoInput.style.width = "45%";
-                const m2span = document.createElement("span");
-                m2span.style.fontSize = "0.7rem";
-                m2span.style.color = "#2a419f";
-                m2span.style.fontWeight = "500";
-                const updateM2visual = () => {
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.gap = '5px';
+                container.style.flexWrap = 'wrap';
+                const largoInput = document.createElement('input');
+                largoInput.type = 'number';
+                largoInput.step = '0.01';
+                largoInput.placeholder = 'Largo (m)';
+                largoInput.value = item.largo || '';
+                largoInput.style.width = '70px';
+                const anchoInput = document.createElement('input');
+                anchoInput.type = 'number';
+                anchoInput.step = '0.01';
+                anchoInput.placeholder = 'Ancho (m)';
+                anchoInput.value = item.ancho || '';
+                anchoInput.style.width = '70px';
+                const m2span = document.createElement('span');
+                m2span.style.fontSize = '0.7rem';
+                m2span.style.color = '#2a419f';
+                const updateM2 = () => {
                     let l = parseFloat(largoInput.value) || 0;
                     let a = parseFloat(anchoInput.value) || 0;
-                    let area = l * a;
-                    m2span.innerText = area > 0 ? `→ ${area.toFixed(2)} m²` : "";
+                    m2span.innerText = l * a > 0 ? `= ${(l*a).toFixed(2)} m²` : '';
+                    item.largo = l;
+                    item.ancho = a;
+                    recalcAll();
                 };
-                largoInput.addEventListener("input", () => {
-                    item.largo = parseFloat(largoInput.value) || 0;
-                    if (anchoInput.value !== undefined) item.ancho = parseFloat(anchoInput.value) || 0;
-                    updateM2visual();
-                    recalcAll();
-                });
-                anchoInput.addEventListener("input", () => {
-                    item.ancho = parseFloat(anchoInput.value) || 0;
-                    if (largoInput.value !== undefined) item.largo = parseFloat(largoInput.value) || 0;
-                    updateM2visual();
-                    recalcAll();
-                });
-                flexDiv.appendChild(largoInput);
-                flexDiv.appendChild(anchoInput);
-                flexDiv.appendChild(m2span);
-                tdMeasure.appendChild(flexDiv);
-                updateM2visual();
+                largoInput.addEventListener('input', updateM2);
+                anchoInput.addEventListener('input', updateM2);
+                container.appendChild(largoInput);
+                container.appendChild(anchoInput);
+                container.appendChild(m2span);
+                cellMeasure.appendChild(container);
+                updateM2();
             }
-            row.appendChild(tdMeasure);
-            
-            // Quinta columna: total del item (solo lectura)
-            const tdTotal = document.createElement("td");
-            let totalItemValue = 0;
-            if (cotizacionType === "unit") {
-                totalItemValue = (parseFloat(item.precioUnitario) || 0) * (parseFloat(item.cantidad) || 0);
-            } else {
-                let m2 = (parseFloat(item.largo) || 0) * (parseFloat(item.ancho) || 0);
-                totalItemValue = m2 * (parseFloat(item.precioM2) || 0);
-            }
-            const totalSpan = document.createElement("span");
-            totalSpan.className = "unit-price-display";
-            totalSpan.innerText = totalItemValue.toFixed(2);
-            tdTotal.appendChild(totalSpan);
-            row.appendChild(tdTotal);
-            
-            // Botón eliminar
-            const tdDelete = document.createElement("td");
-            const delBtn = document.createElement("button");
-            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            delBtn.className = "delete-btn";
-            delBtn.addEventListener("click", () => {
-                items = items.filter(i => i.id !== item.id);
-                if(items.length === 0) nextId = 1;
-                recalcAll();
-            });
-            tdDelete.appendChild(delBtn);
-            row.appendChild(tdDelete);
-            
-            tbody.appendChild(row);
         });
     }
     
-    // Crear nuevo item en base al tipo actual
     function createNewItem() {
-        const baseId = nextId++;
         if (cotizacionType === "unit") {
-            return {
-                id: baseId,
-                tipo: "unit",
-                descripcion: "Nuevo producto",
-                precioUnitario: 0,
-                cantidad: 1,
-                itemTotal: 0,
-            };
+            return { id: nextId++, tipo: "unit", descripcion: "Nuevo producto", precioUnitario: 0, cantidad: 1, itemTotal: 0 };
         } else {
-            return {
-                id: baseId,
-                tipo: "m2",
-                descripcion: "Mampara / Ventana a medida",
-                precioM2: 0,
-                largo: 0,
-                ancho: 0,
-                itemTotal: 0,
-            };
+            return { id: nextId++, tipo: "m2", descripcion: "Producto a medida", precioM2: 0, largo: 0, ancho: 0, itemTotal: 0 };
         }
     }
     
-    function addNewItem() {
-        const nuevoItem = createNewItem();
-        items.push(nuevoItem);
-        recalcAll();
-    }
+    function addNewItem() { items.push(createNewItem()); recalcAll(); }
     
-    // Cambiar tipo de cotización global : transformar items si es necesario
     function changeGlobalType(newType) {
         if (cotizacionType === newType) return;
-        // Transformar items existentes según el nuevo tipo de cotización
-        const newItems = items.map(item => {
+        items = items.map(item => {
             if (newType === "unit" && item.tipo === "m2") {
-                let previousTotal = item.itemTotal || 0;
-                return {
-                    id: item.id,
-                    tipo: "unit",
-                    descripcion: item.descripcion,
-                    precioUnitario: previousTotal > 0 ? previousTotal : 0,
-                    cantidad: 1,
-                    itemTotal: previousTotal,
-                };
-            } 
-            else if (newType === "m2" && item.tipo === "unit") {
-                let precioUnit = item.precioUnitario || 0;
-                let cant = item.cantidad || 0;
-                let precioEquivalenteM2 = (cant * precioUnit) / (cant > 0 ? cant : 1);
-                return {
-                    id: item.id,
-                    tipo: "m2",
-                    descripcion: item.descripcion,
-                    precioM2: precioEquivalenteM2,
-                    largo: 1,
-                    ancho: 1,
-                    itemTotal: precioEquivalenteM2 * 1,
-                };
-            } else {
-                return {...item, tipo: newType};
+                return { id: item.id, tipo: "unit", descripcion: item.descripcion, precioUnitario: item.itemTotal || 0, cantidad: 1, itemTotal: item.itemTotal };
+            } else if (newType === "m2" && item.tipo === "unit") {
+                let val = (item.precioUnitario || 0) * (item.cantidad || 1);
+                return { id: item.id, tipo: "m2", descripcion: item.descripcion, precioM2: item.precioUnitario || 0, largo: 1, ancho: 1, itemTotal: val };
             }
+            return { ...item, tipo: newType };
         });
-        items = newItems;
         cotizacionType = newType;
-        // Actualizar estilo botones activos
         document.querySelectorAll(".type-btn").forEach(btn => {
             if(btn.dataset.type === newType) btn.classList.add("active");
             else btn.classList.remove("active");
@@ -669,313 +380,145 @@
         recalcAll();
     }
     
-    // ---------- Generar PDF con diseño profesional (html2canvas + jsPDF) ----------
-    // ---------- Generar PDF con diseño profesional tipo factura ----------
-async function generatePDF() {
-    // Crear un elemento contenedor para el PDF (no visible)
-    const pdfContainer = document.createElement('div');
-    pdfContainer.style.position = 'absolute';
-    pdfContainer.style.top = '-9999px';
-    pdfContainer.style.left = '-9999px';
-    pdfContainer.style.backgroundColor = 'white';
-    pdfContainer.style.fontFamily = 'Inter, sans-serif';
-    pdfContainer.style.padding = '40px';
-    pdfContainer.style.width = '800px';
-    pdfContainer.style.boxShadow = 'none';
-    
-    // Obtener datos actuales
-    const subtotal = parseFloat(document.getElementById("subtotalVal").innerText);
-    const igv = parseFloat(document.getElementById("igvVal").innerText);
-    const total = parseFloat(document.getElementById("totalVal").innerText);
-    const fecha = new Date().toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
-    const numeroCotizacion = `COT-${fecha.split('/').join('')}-${Math.floor(Math.random() * 1000)}`;
-    
-    // Construir HTML del PDF profesional
-    let itemsHtml = '';
-    items.forEach((item, idx) => {
-        let descripcion = item.descripcion || 'Producto sin descripción';
-        let cantidad = '';
-        let precioUnitario = '';
-        let totalItem = 0;
+    async function generatePDF() {
+        const subtotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+        const igv = subtotal * 0.18;
+        const total = subtotal + igv;
+        const fecha = new Date().toLocaleDateString('es-PE');
+        const fechaVencimiento = new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString('es-PE');
+        const numCotizacion = Math.floor(Math.random() * 10000) + 1000;
         
-        if (item.tipo === 'unit') {
-            const precio = parseFloat(item.precioUnitario) || 0;
-            const cant = parseFloat(item.cantidad) || 0;
-            cantidad = `${cant} und`;
-            precioUnitario = `S/ ${precio.toFixed(2)}`;
-            totalItem = precio * cant;
-        } else {
-            const largo = parseFloat(item.largo) || 0;
-            const ancho = parseFloat(item.ancho) || 0;
-            const m2 = largo * ancho;
-            const precioM2 = parseFloat(item.precioM2) || 0;
-            cantidad = `${largo.toFixed(2)}m × ${ancho.toFixed(2)}m = ${m2.toFixed(2)} m²`;
-            precioUnitario = `S/ ${precioM2.toFixed(2)}/m²`;
-            totalItem = m2 * precioM2;
-        }
+        let itemsHtml = '';
+        items.forEach((item, idx) => {
+            let desc = item.descripcion || 'Producto';
+            let precio = '';
+            let cantidad = '';
+            let totalItem = 0;
+            if (item.tipo === 'unit') {
+                precio = `S/ ${(item.precioUnitario || 0).toFixed(2)}`;
+                cantidad = `${item.cantidad || 0}`;
+                totalItem = (item.precioUnitario || 0) * (item.cantidad || 0);
+            } else {
+                let m2 = (item.largo || 0) * (item.ancho || 0);
+                precio = `S/ ${(item.precioM2 || 0).toFixed(2)}/m²`;
+                cantidad = `${(item.largo || 0).toFixed(2)}m x ${(item.ancho || 0).toFixed(2)}m = ${m2.toFixed(2)}m²`;
+                totalItem = m2 * (item.precioM2 || 0);
+            }
+            itemsHtml += `<tr style="border-bottom:1px solid #ddd;">
+                <td style="padding:10px 5px; text-align:center;">${idx+1}</td>
+                <td style="padding:10px 5px;">${desc}</td>
+                <td style="padding:10px 5px; text-align:center;">${cantidad}</td>
+                <td style="padding:10px 5px; text-align:right;">${precio}</td>
+                <td style="padding:10px 5px; text-align:right; font-weight:bold;">S/ ${totalItem.toFixed(2)}</td>
+            </tr>`;
+        });
         
-        itemsHtml += `
-            <tr style="border-bottom: 1px solid #e0e0e0;">
-                <td style="padding: 12px 8px; text-align: center;">${idx + 1}</td>
-                <td style="padding: 12px 8px;">${descripcion}</td>
-                <td style="padding: 12px 8px; text-align: right;">${precioUnitario}</td>
-                <td style="padding: 12px 8px; text-align: center;">${cantidad}</td>
-                <td style="padding: 12px 8px; text-align: right; font-weight: 600;">S/ ${totalItem.toFixed(2)}</td>
-            </tr>
-        `;
-    });
-    
-    const pdfHtml = `
+        const pdfHtml = `
         <!DOCTYPE html>
         <html>
-        <head>
-            <meta charset="UTF-8">
-            <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { 
-                    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-                    background: white;
-                    padding: 20px;
-                }
-                .invoice {
-                    max-width: 800px;
-                    margin: 0 auto;
-                    background: white;
-                }
-                /* Header con membrete */
-                .header-pdf {
-                    background: linear-gradient(135deg, #2a419f 0%, #1f327a 100%);
-                    color: white;
-                    padding: 30px;
-                    border-radius: 16px 16px 0 0;
-                    margin-bottom: 30px;
-                }
-                .header-pdf h1 {
-                    font-size: 28px;
-                    margin-bottom: 5px;
-                    letter-spacing: 2px;
-                }
-                .header-pdf p {
-                    opacity: 0.9;
-                    font-size: 14px;
-                }
-                .cotizacion-info {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 30px;
-                    padding: 20px;
-                    background: #f8fafd;
-                    border-radius: 12px;
-                    border-left: 4px solid #2a419f;
-                }
-                .info-box p {
-                    margin: 5px 0;
-                    font-size: 13px;
-                    color: #333;
-                }
-                .info-box strong {
-                    color: #2a419f;
-                }
-                .title-cotizacion {
-                    font-size: 24px;
-                    color: #2a419f;
-                    font-weight: 700;
-                    margin-bottom: 20px;
-                    border-bottom: 2px solid #d1e1fa;
-                    padding-bottom: 10px;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin: 20px 0;
-                }
-                th {
-                    background: #2a419f;
-                    color: white;
-                    padding: 12px 8px;
-                    font-weight: 600;
-                    font-size: 13px;
-                }
-                td {
-                    padding: 10px 8px;
-                    font-size: 13px;
-                }
-                .totales {
-                    margin-top: 30px;
-                    text-align: right;
-                    padding: 20px;
-                    background: #f8fafd;
-                    border-radius: 12px;
-                }
-                .totales p {
-                    margin: 8px 0;
-                    font-size: 14px;
-                }
-                .total-final-pdf {
-                    font-size: 22px;
-                    font-weight: 700;
-                    color: #2a419f;
-                    border-top: 2px solid #d1e1fa;
-                    padding-top: 10px;
-                    margin-top: 10px;
-                }
-                .footer-pdf {
-                    margin-top: 40px;
-                    text-align: center;
-                    padding-top: 20px;
-                    border-top: 1px solid #e0e0e0;
-                    font-size: 11px;
-                    color: #888;
-                }
-                .nota {
-                    margin-top: 20px;
-                    padding: 15px;
-                    background: #fff8e1;
-                    border-left: 3px solid #ffc107;
-                    font-size: 11px;
-                    color: #856404;
-                    border-radius: 8px;
-                }
-                .igv-note {
-                    font-size: 11px;
-                    color: #666;
-                    margin-top: 5px;
-                }
-            </style>
+        <head><meta charset="UTF-8"><title>Cotización LUTHIPLAST</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: white; }
+            .container { max-width: 1000px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .header h1 { color: #2a419f; margin: 0; font-size: 24px; }
+            .header p { margin: 5px 0; font-size: 12px; color: #555; }
+            .info-row { display: flex; justify-content: space-between; margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+            .info-box p { margin: 5px 0; font-size: 12px; }
+            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            th { background: #2a419f; color: white; padding: 12px; text-align: center; font-size: 12px; }
+            td { padding: 10px; font-size: 11px; }
+            .totales { text-align: right; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+            .totales p { margin: 5px 0; font-size: 14px; }
+            .total-final { font-size: 20px; font-weight: bold; color: #2a419f; border-top: 2px solid #ccc; padding-top: 10px; margin-top: 10px; }
+            .terms { margin-top: 30px; padding: 15px; background: #fff8e1; border-left: 4px solid #ffc107; font-size: 11px; }
+            .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #777; border-top: 1px solid #ddd; padding-top: 15px; }
+            .signature { margin-top: 30px; display: flex; justify-content: space-between; }
+            .sign-line { border-top: 1px solid #000; width: 200px; margin-top: 30px; text-align: center; font-size: 10px; }
+        </style>
         </head>
         <body>
-            <div class="invoice">
-                <div class="header-pdf">
-                    <h1>LUTHIPLAST</h1>
-                    <p>Instalación profesional de ventanas y mamparas de aluminio</p>
-                    <p>RUC: 20601234567 | Tel: (01) 234 5678 | ventas@luthiplast.com</p>
+        <div class="container">
+            <div class="header">
+                <h1>IMPORTACIONES LUTHIPLAST EIRL</h1>
+                <p>Magadalena Del Mar - Lima | Web: www.luthiplast.com | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com</p>
+                <p><strong>Asesor de venta:</strong> Miguel Zegarra Ayala</p>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-box">
+                    <p><strong>FECHA:</strong> ${fecha}</p>
+                    <p><strong>COTIZACIÓN #:</strong> ${numCotizacion}</p>
+                    <p><strong>VALIDO HASTA:</strong> ${fechaVencimiento}</p>
                 </div>
-                
-                <div class="cotizacion-info">
-                    <div class="info-box">
-                        <p><strong>📄 N° Cotización:</strong> ${numeroCotizacion}</p>
-                        <p><strong>📅 Fecha de emisión:</strong> ${fecha}</p>
-                        <p><strong>⏱ Válido hasta:</strong> ${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString('es-PE')}</p>
-                    </div>
-                    <div class="info-box">
-                        <p><strong>👤 Cliente:</strong> _________________________</p>
-                        <p><strong>📧 Email:</strong> _________________________</p>
-                        <p><strong>📞 Teléfono:</strong> _________________________</p>
-                    </div>
-                </div>
-                
-                <div class="title-cotizacion">
-                    DETALLE DE COTIZACIÓN
-                </div>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="text-align: center;">#</th>
-                            <th style="text-align: left;">Descripción</th>
-                            <th style="text-align: right;">Precio Unitario</th>
-                            <th style="text-align: center;">Cantidad / Medida</th>
-                            <th style="text-align: right;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsHtml || '<tr><td colspan="5" style="text-align:center; padding:40px;">Sin items registrados</td></tr>'}
-                    </tbody>
-                </table>
-                
-                <div class="totales">
-                    <p><strong>Subtotal:</strong> S/ ${subtotal.toFixed(2)}</p>
-                    <p><strong>IGV (18%):</strong> S/ ${igv.toFixed(2)}</p>
-                    <p class="total-final-pdf"><strong>TOTAL:</strong> S/ ${total.toFixed(2)}</p>
-                    <p class="igv-note">*Precios incluyen IGV. Afecto al 18% según Ley Peruana.</p>
-                </div>
-                
-                <div class="nota">
-                    <strong>📌 Notas importantes:</strong><br>
-                    • Los precios incluyen instalación profesional.<br>
-                    • Garantía de 3 años en materiales y 1 año en instalación.<br>
-                    • Tiempo de entrega: 10-15 días hábiles después de la confirmación.<br>
-                    • Formas de pago: Depósito bancario, transferencia o efectivo.
-                </div>
-                
-                <div class="footer-pdf">
-                    <p>LUTHIPLAST - Especialistas en ventanas y mamparas de aluminio</p>
-                    <p>Av. Principal 123, San Isidro, Lima - Perú | www.luthiplast.com</p>
-                    <p>Documento generado electrónicamente - Válido como cotización oficial</p>
+                <div class="info-box">
+                    <p><strong>CLIENTE:</strong> ${document.querySelector('.brand input')?.value || '_________________________'}</p>
                 </div>
             </div>
+            
+            <table>
+                <thead><tr><th>#</th><th>DESCRIPCIÓN</th><th>CANTIDAD</th><th>PRECIO UNIT.</th><th>SUBTOTAL</th></tr></thead>
+                <tbody>${itemsHtml || '<tr><td colspan="5" style="text-align:center;">Sin items</td></tr>'}</tbody>
+            </table>
+            
+            <div class="totales">
+                <p><strong>SUBTOTAL:</strong> S/ ${subtotal.toFixed(2)}</p>
+                <p><strong>I.G.V. (18%):</strong> S/ ${igv.toFixed(2)}</p>
+                <div class="total-final"><strong>TOTAL:</strong> S/ ${total.toFixed(2)}</div>
+            </div>
+            
+            <div class="terms">
+                <strong>TÉRMINOS Y CONDICIONES</strong><br>
+                1.- El pago se realizará: 60% de adelanto / 40% a la entrega de la obra<br>
+                2.- Abonar en la Cta. Cte. N° 191-2650527-0-98 CCI: 00219100265052709858 Banco de la Nación<br>
+                3.- Tiempo de elaboración e instalación: 5 días útiles<br>
+                <br>
+                <strong>La aceptación del cliente (firma a continuación)</strong><br>
+                Nombre del cliente: _________________________ Firma: _________________________
+            </div>
+            
+            <div class="signature">
+                <div class="sign-line">_________________________<br>ASESOR DE VENTAS</div>
+                <div class="sign-line">_________________________<br>CLIENTE</div>
+            </div>
+            
+            <div class="footer">
+                Si usted tiene alguna pregunta sobre esta cotización, por favor, póngase en contacto con nosotros.<br>
+                IMPORTACIONES LUTHIPLAST EIRL | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com<br>
+                ¡Gracias por hacer negocios con nosotros!
+            </div>
+        </div>
         </body>
         </html>
-    `;
-    
-    pdfContainer.innerHTML = pdfHtml;
-    document.body.appendChild(pdfContainer);
-    
-    try {
-        const canvas = await html2canvas(pdfContainer, {
-            scale: 2.5,
-            backgroundColor: '#ffffff',
-            logging: false,
-            useCORS: true
-        });
+        `;
         
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const pageHeight = 297;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let position = 0;
+        const pdfContainer = document.createElement('div');
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.top = '-9999px';
+        pdfContainer.innerHTML = pdfHtml;
+        document.body.appendChild(pdfContainer);
         
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        let remainingHeight = imgHeight;
-        let currentPosition = -pageHeight;
-        
-        while (remainingHeight > pageHeight) {
-            currentPosition -= pageHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, currentPosition, imgWidth, imgHeight);
-            remainingHeight -= pageHeight;
-        }
-        
-        pdf.save(`LUTHIPLAST_Cotizacion_${numeroCotizacion}.pdf`);
-    } catch (err) {
-        console.error('Error:', err);
-        alert('Error al generar el PDF. Intente nuevamente.');
-    } finally {
-        document.body.removeChild(pdfContainer);
+        try {
+            const canvas = await html2canvas(pdfContainer, { scale: 2.5, backgroundColor: '#ffffff' });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 210;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save(`Cotizacion_LUTHIPLAST_${numCotizacion}.pdf`);
+        } catch(err) { alert('Error al generar PDF'); }
+        finally { document.body.removeChild(pdfContainer); }
     }
-}
     
-    // inicializadores + eventos
     function init() {
-        items = [];
-        nextId = 1;
-        const demoItem = {
-            id: nextId++,
-            tipo: "unit",
-            descripcion: "Ventana corrediza ALU-4000",
-            precioUnitario: 520,
-            cantidad: 2,
-            itemTotal: 1040,
-        };
-        items.push(demoItem);
-        cotizacionType = "unit";
+        items = [{ id: nextId++, tipo: "unit", descripcion: "Ventana corrediza ALU-4000", precioUnitario: 520, cantidad: 2, itemTotal: 1040 }];
         updateHeaderByType();
         recalcAll();
-        
-        document.querySelectorAll(".type-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const newType = btn.dataset.type;
-                changeGlobalType(newType);
-            });
-        });
-        document.getElementById("addItemBtn").addEventListener("click", () => {
-            addNewItem();
-        });
+        document.querySelectorAll(".type-btn").forEach(btn => btn.addEventListener("click", () => changeGlobalType(btn.dataset.type)));
+        document.getElementById("addItemBtn").addEventListener("click", addNewItem);
         document.getElementById("downloadPdfBtn").addEventListener("click", generatePDF);
     }
-    
     init();
 </script>
 </body>

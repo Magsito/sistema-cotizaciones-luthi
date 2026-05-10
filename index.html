@@ -164,7 +164,9 @@
 <div class="container">
     <div class="header">
         <div class="brand">
-            <img src="logo.png" alt="Luthiplast" style="height: 55px;" onerror="this.style.display='none'">
+            <!-- === LOGO DE LA EMPRESA === -->
+            <img src="logo.png" alt="Luthiplast" style="height: 55px; width: auto; object-fit: contain;" onerror="this.style.display='none'">
+            <!-- Si no funciona tu logo, cambia "logo.png" por el nombre correcto de tu archivo -->
             <div>
                 <h1>IMPORTACIONES LUTHIPLAST EIRL</h1>
                 <p>Instalación profesional de ventanas y mamparas de aluminio</p>
@@ -233,7 +235,6 @@
                 let precioM2 = parseFloat(item.precioM2) || 0;
                 item.itemTotal = m2 * precioM2;
                 item.m2Calculado = m2;
-                item.cantidadMostrada = `${largo}m × ${ancho}m = ${m2.toFixed(2)} m²`;
             }
         });
         renderTable();
@@ -410,7 +411,7 @@
                 <td style="padding:10px 5px; text-align:center;">${cantidad}</td>
                 <td style="padding:10px 5px; text-align:right;">${precio}</td>
                 <td style="padding:10px 5px; text-align:right; font-weight:bold;">S/ ${totalItem.toFixed(2)}</td>
-            </tr>`;
+             </tr>`;
         });
         
         const pdfHtml = `
@@ -452,7 +453,7 @@
                     <p><strong>VALIDO HASTA:</strong> ${fechaVencimiento}</p>
                 </div>
                 <div class="info-box">
-                    <p><strong>CLIENTE:</strong> ${document.querySelector('.brand input')?.value || '_________________________'}</p>
+                    <p><strong>CLIENTE:</strong> _________________________</p>
                 </div>
             </div>
             

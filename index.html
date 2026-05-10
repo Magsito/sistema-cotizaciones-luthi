@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ALU-SYSTEM | Cotizador Profesional</title>
+    <!-- Fuentes y Librerías -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Librería jsPDF + html2canvas para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef2fc 0%, #ffffff 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Encabezado */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #2a419f;
+        }
+        .brand h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2a419f, #1f327a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .brand p {
+            color: #4a5b8c;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .badge {
+            background: #d1e1fa;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            color: #2a419f;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Tarjeta principal */
+        .card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+
+        .card-header {
+            background: #f8fafd;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid #e2edfc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2a419f;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .type-selector {
+            display: flex;
+            gap: 1rem;
+            background: #ffffff;
+            padding: 0.3rem;
+            border-radius: 60px;
+            border: 1px solid #cbdff5;
+        }
+        .type-btn {
+            border: none;
+            background: transparent;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e2f5e;
+        }
+        .type-btn.active {
+            background: #2a419f;
+            color: white;
+            box-shadow: 0 4px 10px rgba(42,65,159,0.3);
+        }
+
+        /* Tabla responsiva */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 1rem 1rem 1rem;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .items-table th {
+            text-align: left;
+            padding: 1rem 0.8rem;
+            background-color: #f0f5fe;
+            color: #1f3a7a;
+            font-weight: 600;
+            border-bottom: 2px solid #d1e1fa;
+        }
+        .items-table td {
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid #e9eff8;
+            vertical-align: middle;
+        }
+        .item-desc {
+            min-width: 200px;
+        }
+        input, .fake-input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            border: 1px solid #cbdff5;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            background: white;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2a419f;
+            box-shadow: 0 0 0 3px rgba(42,65,159,0.15);
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #a0b8da;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+        }
+        .delete-btn:hover {
+            color: #e11d48;
+            background: #fee2e2;
+        }
+        .add-row-btn {
+            margin: 0.8rem 1rem 1.5rem 1rem;
+            background: #ffffff;
+            border: 2px dashed #2a419f;
+            color: #2a419f;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .add-row-btn:hover {
+            background: #eef3ff;
+            border-style: solid;
+        }
+
+        /* Panel totales */
+        .totals-panel {
+            background: #f9fcff;
+            border-radius: 24px;
+            margin: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            border: 1px solid #d1e1fa;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 2rem;
+        }
+        .totals-box {
+            text-align: right;
+            min-width: 200px;
+        }
+        .totals-box p {
+            margin: 0.4rem 0;
+        }
+        .subtotal, .igv, .total-final {
+            font-weight: 600;
+        }
+        .total-final {
+            font-size: 1.6rem;
+            color: #2a419f;
+            border-top: 2px solid #cde0fc;
+            margin-top: 0.2rem;
+            padding-top: 0.5rem;
+        }
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin: 0 1.5rem 1.8rem 1.5rem;
+        }
+        .btn-pdf {
+            background: #2a419f;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .btn-pdf:hover {
+            background: #1f327a;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #eef2fc;
+            color: #2a419f;
+            border: 1px solid #c5d7f5;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6c86a8;
+            margin-top: 2rem;
+        }
+        @media (max-width: 750px) {
+            body { padding: 1rem; }
+            .totals-panel { justify-content: center; text-align: center; }
+            .items-table th, .items-table td { padding: 0.6rem 0.4rem; font-size: 0.8rem; }
+        }
+        .unit-price-display {
+            font-weight: 600;
+            color: #2c3e66;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="brand">
+            <h1><i class="fas fa-window-maximize" style="color:#2a419f;"></i> ALU-SYSTEM</h1>
+            <p>Instalación profesional de ventanas y mamparas de aluminio</p>
+        </div>
+        <div class="badge">
+            <i class="fas fa-file-invoice-dollar"></i> Cotización en tiempo real
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-calculator"></i> Presupuesto detallado</h2>
+            <div class="type-selector" id="typeSelector">
+                <button class="type-btn active" data-type="unit">📦 Por Unidad (precio x unidad)</button>
+                <button class="type-btn" data-type="m2">📐 Por Metro cuadrado (largo × ancho)</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="items-table" id="itemsTable">
+                <thead>
+                    <tr>
+                        <th># Ítem</th>
+                        <th>Descripción</th>
+                        <th id="colSpecific1">Precio Unitario (S/)</th>
+                        <th id="colSpecific2">Cantidad / Medidas</th>
+                        <th id="colTotalLabel">Total Ítem (S/)</th>
+                        <th style="width: 50px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Filas dinámicas -->
+                </tbody>
+            </table>
+        </div>
+        <div style="padding: 0 1rem 0 1rem;">
+            <button class="add-row-btn" id="addItemBtn"><i class="fas fa-plus-circle"></i> Agregar ítem</button>
+        </div>
+
+        <!-- Totales -->
+        <div class="totals-panel">
+            <div class="totals-box">
+                <p><strong>Subtotal (S/)</strong> <span id="subtotalVal">0.00</span></p>
+                <p><strong>IGV (18%)</strong> <span id="igvVal">0.00</span></p>
+                <p class="total-final"><strong>TOTAL (S/)</strong> <span id="totalVal">0.00</span></p>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> DESCARGAR COTIZACIÓN PDF</button>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-balance-scale"></i> Cotización válida con IGV 18% | Precios referenciales · ALU-SYSTEM
+    </footer>
+</div>
+
+<script>
+    // -------- Variables globales ----------
+    let cotizacionType = "unit";   // 'unit' o 'm2'
+    let items = [];                // almacena cada item: { id, desc, tipoDatos }
+
+    let nextId = 1;
+
+    // ---------- Helper: recalcular todos los totales y actualizar tabla ----------
+    function recalcAll() {
+        // recalcular el total de cada item (campo itemTotal)
+        items.forEach(item => {
+            if (item.tipo === "unit") {
+                // unit: precio unitario * cantidad
+                let precioUnit = parseFloat(item.precioUnitario) || 0;
+                let cantidad = parseFloat(item.cantidad) || 0;
+                item.itemTotal = precioUnit * cantidad;
+                // guardamos para visualización
+                item.precioMostrado = precioUnit;
+                item.cantidadMostrada = cantidad;
+                item.itm2Area = null;
+            } 
+            else if (item.tipo === "m2") {
+                // m2: largo * ancho = m2, luego * precioM2
+                let largo = parseFloat(item.largo) || 0;
+                let ancho = parseFloat(item.ancho) || 0;
+                let m2 = largo * ancho;
+                let precioM2 = parseFloat(item.precioM2) || 0;
+                item.itemTotal = m2 * precioM2;
+                item.m2Calculado = m2;
+                item.precioMostrado = precioM2;
+                item.cantidadMostrada = `${largo}m × ${ancho}m = ${m2.toFixed(2)} m²`;
+            }
+        });
+        renderTable();
+        updateTotals();
+    }
+
+    // actualizar subtotal, IGV, total
+    function updateTotals() {
+        let subtotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+        let igv = subtotal * 0.18;
+        let total = subtotal + igv;
+        document.getElementById("subtotalVal").innerText = subtotal.toFixed(2);
+        document.getElementById("igvVal").innerText = igv.toFixed(2);
+        document.getElementById("totalVal").innerText = total.toFixed(2);
+    }
+
+    // cambiar columnas según tipo de cotización (dinámico en cabecera)
+    function updateHeaderByType() {
+        const colSpecific1 = document.getElementById("colSpecific1");
+        const colSpecific2 = document.getElementById("colSpecific2");
+        const colTotalLabel = document.getElementById("colTotalLabel");
+        if (cotizacionType === "unit") {
+            colSpecific1.innerText = "Precio Unitario (S/)";
+            colSpecific2.innerText = "Cantidad (unidades)";
+            colTotalLabel.innerText = "Total Ítem (S/)";
+        } else {
+            colSpecific1.innerText = "Precio m² (S/)";
+            colSpecific2.innerText = "Largo (m) × Ancho (m) → m²";
+            colTotalLabel.innerText = "Total Ítem (S/)";
+        }
+        // forzar re-render
+        renderTable();
+    }
+
+    // Renderizar tabla completa desde el array items
+    function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        if (items.length === 0) {
+            // fila vacía elegante
+            const emptyRow = document.createElement("tr");
+            emptyRow.innerHTML = `<td colspan="6" style="text-align:center; padding:2rem; color:#7b8eac;">➕ Haz clic en "Agregar ítem" para comenzar la cotización</td>`;
+            tbody.appendChild(emptyRow);
+            return;
+        }
+
+        items.forEach((item, idx) => {
+            const row = document.createElement("tr");
+            const itemNumber = idx + 1;
+            // Celda Ítem
+            const tdNum = document.createElement("td");
+            tdNum.innerText = itemNumber;
+            tdNum.style.fontWeight = "600";
+            row.appendChild(tdNum);
+            
+            // Celda Descripción (editable con input)
+            const tdDesc = document.createElement("td");
+            const descInput = document.createElement("input");
+            descInput.type = "text";
+            descInput.value = item.descripcion || "";
+            descInput.placeholder = "Ej: Ventana corrediza 2 hojas";
+            descInput.classList.add("item-desc-input");
+            descInput.style.width = "100%";
+            descInput.addEventListener("change", (e) => {
+                item.descripcion = e.target.value;
+                // no necesita recalc, solo render posterior opcional
+                renderTable(); // refrescar desc
+            });
+            tdDesc.appendChild(descInput);
+            row.appendChild(tdDesc);
+            
+            // Tercera columna: precio unitario o precio m²
+            const tdPrice = document.createElement("td");
+            if (cotizacionType === "unit") {
+                const priceInput = document.createElement("input");
+                priceInput.type = "number";
+                priceInput.step = "0.01";
+                priceInput.value = item.precioUnitario !== undefined ? item.precioUnitario : "";
+                priceInput.placeholder = "Precio x unidad";
+                priceInput.addEventListener("change", (e) => {
+                    item.precioUnitario = parseFloat(e.target.value) || 0;
+                    recalcAll();
+                });
+                tdPrice.appendChild(priceInput);
+            } else {
+                const priceInput = document.createElement("input");
+                priceInput.type = "number";
+                priceInput.step = "0.01";
+                priceInput.value = item.precioM2 !== undefined ? item.precioM2 : "";
+                priceInput.placeholder = "S/ por m²";
+                priceInput.addEventListener("change", (e) => {
+                    item.precioM2 = parseFloat(e.target.value) || 0;
+                    recalcAll();
+                });
+                tdPrice.appendChild(priceInput);
+            }
+            row.appendChild(tdPrice);
+            
+            // Cuarta columna: según tipo
+            const tdMeasure = document.createElement("td");
+            if (cotizacionType === "unit") {
+                const cantInput = document.createElement("input");
+                cantInput.type = "number";
+                cantInput.step = "1";
+                cantInput.min = "0";
+                cantInput.value = item.cantidad !== undefined ? item.cantidad : 1;
+                cantInput.placeholder = "Unidades";
+                cantInput.addEventListener("change", (e) => {
+                    item.cantidad = parseFloat(e.target.value) || 0;
+                    recalcAll();
+                });
+                tdMeasure.appendChild(cantInput);
+            } else {
+                // layout para largo y ancho
+                const flexDiv = document.createElement("div");
+                flexDiv.style.display = "flex";
+                flexDiv.style.gap = "8px";
+                flexDiv.style.alignItems = "center";
+                flexDiv.style.flexWrap = "wrap";
+                const largoInput = document.createElement("input");
+                largoInput.type = "number";
+                largoInput.step = "0.01";
+                largoInput.placeholder = "Largo (m)";
+                largoInput.value = item.largo !== undefined ? item.largo : "";
+                largoInput.style.width = "45%";
+                const anchoInput = document.createElement("input");
+                anchoInput.type = "number";
+                anchoInput.step = "0.01";
+                anchoInput.placeholder = "Ancho (m)";
+                anchoInput.value = item.ancho !== undefined ? item.ancho : "";
+                anchoInput.style.width = "45%";
+                const m2span = document.createElement("span");
+                m2span.style.fontSize = "0.7rem";
+                m2span.style.color = "#2a419f";
+                m2span.style.fontWeight = "500";
+                const updateM2visual = () => {
+                    let l = parseFloat(largoInput.value) || 0;
+                    let a = parseFloat(anchoInput.value) || 0;
+                    let area = l * a;
+                    m2span.innerText = area > 0 ? `→ ${area.toFixed(2)} m²` : "";
+                };
+                largoInput.addEventListener("input", () => {
+                    item.largo = parseFloat(largoInput.value) || 0;
+                    if (anchoInput.value !== undefined) item.ancho = parseFloat(anchoInput.value) || 0;
+                    updateM2visual();
+                    recalcAll();
+                });
+                anchoInput.addEventListener("input", () => {
+                    item.ancho = parseFloat(anchoInput.value) || 0;
+                    if (largoInput.value !== undefined) item.largo = parseFloat(largoInput.value) || 0;
+                    updateM2visual();
+                    recalcAll();
+                });
+                flexDiv.appendChild(largoInput);
+                flexDiv.appendChild(anchoInput);
+                flexDiv.appendChild(m2span);
+                tdMeasure.appendChild(flexDiv);
+                // inicializar visual
+                updateM2visual();
+            }
+            row.appendChild(tdMeasure);
+            
+            // Quinta columna: total del item (solo lectura)
+            const tdTotal = document.createElement("td");
+            let totalItemValue = 0;
+            if (cotizacionType === "unit") {
+                totalItemValue = (parseFloat(item.precioUnitario) || 0) * (parseFloat(item.cantidad) || 0);
+            } else {
+                let m2 = (parseFloat(item.largo) || 0) * (parseFloat(item.ancho) || 0);
+                totalItemValue = m2 * (parseFloat(item.precioM2) || 0);
+            }
+            const totalSpan = document.createElement("span");
+            totalSpan.className = "unit-price-display";
+            totalSpan.innerText = totalItemValue.toFixed(2);
+            tdTotal.appendChild(totalSpan);
+            row.appendChild(tdTotal);
+            
+            // Botón eliminar
+            const tdDelete = document.createElement("td");
+            const delBtn = document.createElement("button");
+            delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            delBtn.className = "delete-btn";
+            delBtn.addEventListener("click", () => {
+                items = items.filter(i => i.id !== item.id);
+                if(items.length === 0) nextId = 1;
+                recalcAll();
+            });
+            tdDelete.appendChild(delBtn);
+            row.appendChild(tdDelete);
+            
+            tbody.appendChild(row);
+        });
+    }
+    
+    // Crear nuevo item en base al tipo actual
+    function createNewItem() {
+        const baseId = nextId++;
+        if (cotizacionType === "unit") {
+            return {
+                id: baseId,
+                tipo: "unit",
+                descripcion: "Nuevo producto",
+                precioUnitario: 0,
+                cantidad: 1,
+                itemTotal: 0,
+            };
+        } else {
+            return {
+                id: baseId,
+                tipo: "m2",
+                descripcion: "Mampara / Ventana a medida",
+                precioM2: 0,
+                largo: 0,
+                ancho: 0,
+                itemTotal: 0,
+            };
+        }
+    }
+    
+    function addNewItem() {
+        const nuevoItem = createNewItem();
+        items.push(nuevoItem);
+        recalcAll();
+    }
+    
+    // Cambiar tipo de cotización global : transformar items si es necesario
+    function changeGlobalType(newType) {
+        if (cotizacionType === newType) return;
+        // Transformar items existentes según el nuevo tipo de cotización
+        const newItems = items.map(item => {
+            if (newType === "unit" && item.tipo === "m2") {
+                // de m2 -> unit: intentar convertir: tomar precioM2 * m2 actual como valor referencia?
+                // Para no perder datos, hacemos una conversión conservadora: reiniciamos unidad por defecto
+                let previousTotal = item.itemTotal || 0;
+                // Sugerencia: pasar a unit con cantidad 1 y precio unitario = total anterior (si aplica)
+                return {
+                    id: item.id,
+                    tipo: "unit",
+                    descripcion: item.descripcion,
+                    precioUnitario: previousTotal > 0 ? previousTotal : 0,
+                    cantidad: 1,
+                    itemTotal: previousTotal,
+                };
+            } 
+            else if (newType === "m2" && item.tipo === "unit") {
+                // unit -> m2: convertir conservador: asumimos 1 m2 con precioM2 = precioUnitario * cantidad? Mejor: precioM2 = precioUnitario (si cantidad>0)
+                let precioUnit = item.precioUnitario || 0;
+                let cant = item.cantidad || 0;
+                let precioEquivalenteM2 = (cant * precioUnit) / (cant > 0 ? cant : 1);
+                return {
+                    id: item.id,
+                    tipo: "m2",
+                    descripcion: item.descripcion,
+                    precioM2: precioEquivalenteM2,
+                    largo: 1,
+                    ancho: 1,
+                    itemTotal: precioEquivalenteM2 * 1,
+                };
+            } else {
+                return {...item, tipo: newType};
+            }
+        });
+        items = newItems;
+        cotizacionType = newType;
+        // Actualizar estilo botones activos
+        document.querySelectorAll(".type-btn").forEach(btn => {
+            if(btn.dataset.type === newType) btn.classList.add("active");
+            else btn.classList.remove("active");
+        });
+        updateHeaderByType();
+        recalcAll();
+    }
+    
+    // ---------- Generar PDF con diseño profesional (html2canvas + jsPDF) ----------
+    async function generatePDF() {
+        // Clonamos temporalmente la sección del cotizador para tener un diseño limpio en PDF.
+        const element = document.querySelector(".card");
+        const originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        
+        // Clon profundo para no interferir
+        const cloneCard = element.cloneNode(true);
+        // Ajustamos estilos para PDF: fondo blanco fijo, anchos fijos
+        cloneCard.style.width = "800px";
+        cloneCard.style.margin = "0 auto";
+        cloneCard.style.padding = "20px";
+        cloneCard.style.background = "white";
+        cloneCard.style.boxShadow = "none";
+        cloneCard.style.borderRadius = "0px";
+        // Arreglamos inputs pues el canvas tomará snapshot, pero los valores deben estar actualizados
+        // forzamos a que los campos input muestren valores actuales (ya renderizados) pero como es clon debemos extraer los valores del items.
+        // Pero utilizamos un canvas de la instancia original? mejor capturar elemento original temporal pero no interfiere.
+        // Usamos directamente el elemento visible para evitar discrepancias, esto mantiene datos actuales.
+        // html2canvas se hará sobre el elemento original en su estado actual pero mostrando los valores correctos.
+        // Escondemos botones extra solo para PDF? mejor.
+        const pdfContainer = document.createElement('div');
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.top = '-9999px';
+        pdfContainer.style.left = '-9999px';
+        pdfContainer.appendChild(cloneCard);
+        document.body.appendChild(pdfContainer);
+        
+        try {
+            const canvas = await html2canvas(cloneCard, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: false
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 210; // A4 width mm
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let position = 0;
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            // si la imagen es más larga que una página cortar
+            let remainingHeight = imgHeight;
+            let currentPosition = -pageHeight;
+            while (remainingHeight > pageHeight) {
+                currentPosition -= pageHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, currentPosition, imgWidth, imgHeight);
+                remainingHeight -= pageHeight;
+            }
+            pdf.save(`Cotizacion_ALU_SYSTEM_${new Date().toISOString().slice(0,19)}.pdf`);
+        } catch (err) {
+            console.error(err);
+            alert("Error al generar PDF, intenta nuevamente");
+        } finally {
+            document.body.removeChild(pdfContainer);
+            document.body.style.overflow = originalOverflow;
+        }
+    }
+    
+    // inicializadores + eventos
+    function init() {
+        // items por defecto: 1 item unitario demo
+        items = [];
+        nextId = 1;
+        const demoItem = {
+            id: nextId++,
+            tipo: "unit",
+            descripcion: "Ventana corrediza ALU-4000",
+            precioUnitario: 520,
+            cantidad: 2,
+            itemTotal: 1040,
+        };
+        items.push(demoItem);
+        cotizacionType = "unit";
+        updateHeaderByType();
+        recalcAll();
+        
+        // Listeners botones tipo
+        document.querySelectorAll(".type-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const newType = btn.dataset.type;
+                changeGlobalType(newType);
+            });
+        });
+        document.getElementById("addItemBtn").addEventListener("click", () => {
+            addNewItem();
+        });
+        document.getElementById("downloadPdfBtn").addEventListener("click", generatePDF);
+    }
+    
+    init();
+</script>
+</body>
+</html>

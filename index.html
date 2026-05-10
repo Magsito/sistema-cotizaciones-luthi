@@ -382,135 +382,146 @@
     }
     
     async function generatePDF() {
-        const subtotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
-        const igv = subtotal * 0.18;
-        const total = subtotal + igv;
-        const fecha = new Date().toLocaleDateString('es-PE');
-        const fechaVencimiento = new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString('es-PE');
-        const numCotizacion = Math.floor(Math.random() * 10000) + 1000;
+    const subtotal = items.reduce((sum, it) => sum + (it.itemTotal || 0), 0);
+    const igv = subtotal * 0.18;
+    const total = subtotal + igv;
+    const fecha = new Date().toLocaleDateString('es-PE');
+    const fechaVencimiento = new Date(Date.now() + 7*24*60*60*1000).toLocaleDateString('es-PE');
+    const numCotizacion = Math.floor(Math.random() * 10000) + 1000;
+    
+    let itemsHtml = '';
+    items.forEach((item, idx) => {
+        let desc = item.descripcion || 'Producto';
+        let precio = '';
+        let cantidad = '';
+        let totalItem = 0;
+        if (item.tipo === 'unit') {
+            precio = `S/ ${(item.precioUnitario || 0).toFixed(2)}`;
+            cantidad = `${item.cantidad || 0}`;
+            totalItem = (item.precioUnitario || 0) * (item.cantidad || 0);
+        } else {
+            let m2 = (item.largo || 0) * (item.ancho || 0);
+            precio = `S/ ${(item.precioM2 || 0).toFixed(2)}/m²`;
+            cantidad = `${(item.largo || 0).toFixed(2)}m x ${(item.ancho || 0).toFixed(2)}m = ${m2.toFixed(2)}m²`;
+            totalItem = m2 * (item.precioM2 || 0);
+        }
+        itemsHtml += `<tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:10px 5px; text-align:center;">${idx+1}</td>
+            <td style="padding:10px 5px;">${desc}</td>
+            <td style="padding:10px 5px; text-align:center;">${cantidad}</td>
+            <td style="padding:10px 5px; text-align:right;">${precio}</td>
+            <td style="padding:10px 5px; text-align:right; font-weight:bold;">S/ ${totalItem.toFixed(2)}</td>
+        </tr>`;
+    });
+    
+    // ⬇️⬇️⬇️ CAMBIA ESTA URL POR LA DE TU LOGO ⬇️⬇️⬇️
+    const LOGO_URL = 'https://raw.githubusercontent.com/TU-USUARIO/TU-REPO/main/logo.jpg';
+    
+    const pdfHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="UTF-8"><title>Cotización LUTHIPLAST</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: white; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: #2a419f; margin: 5px 0 0 0; font-size: 24px; }
+        .header p { margin: 5px 0; font-size: 12px; color: #555; }
+        .logo-container { text-align: center; margin-bottom: 15px; }
+        .logo-container img { max-height: 70px; width: auto; }
+        .info-row { display: flex; justify-content: space-between; margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .info-box p { margin: 5px 0; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background: #2a419f; color: white; padding: 12px; text-align: center; font-size: 12px; }
+        td { padding: 10px; font-size: 11px; }
+        .totales { text-align: right; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+        .totales p { margin: 5px 0; font-size: 14px; }
+        .total-final { font-size: 20px; font-weight: bold; color: #2a419f; border-top: 2px solid #ccc; padding-top: 10px; margin-top: 10px; }
+        .terms { margin-top: 30px; padding: 15px; background: #fff8e1; border-left: 4px solid #ffc107; font-size: 11px; }
+        .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #777; border-top: 1px solid #ddd; padding-top: 15px; }
+        .signature { margin-top: 30px; display: flex; justify-content: space-between; }
+        .sign-line { border-top: 1px solid #000; width: 200px; margin-top: 30px; text-align: center; font-size: 10px; }
+    </style>
+    </head>
+    <body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="${LOGO_URL}" alt="Luthiplast Logo" onerror="this.style.display='none'">
+        </div>
+        <div class="header">
+            <h1>IMPORTACIONES LUTHIPLAST EIRL</h1>
+            <p>Magadalena Del Mar - Lima | Web: www.luthiplast.com | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com</p>
+            <p><strong>Asesor de venta:</strong> Miguel Zegarra Ayala</p>
+        </div>
         
-        let itemsHtml = '';
-        items.forEach((item, idx) => {
-            let desc = item.descripcion || 'Producto';
-            let precio = '';
-            let cantidad = '';
-            let totalItem = 0;
-            if (item.tipo === 'unit') {
-                precio = `S/ ${(item.precioUnitario || 0).toFixed(2)}`;
-                cantidad = `${item.cantidad || 0}`;
-                totalItem = (item.precioUnitario || 0) * (item.cantidad || 0);
-            } else {
-                let m2 = (item.largo || 0) * (item.ancho || 0);
-                precio = `S/ ${(item.precioM2 || 0).toFixed(2)}/m²`;
-                cantidad = `${(item.largo || 0).toFixed(2)}m x ${(item.ancho || 0).toFixed(2)}m = ${m2.toFixed(2)}m²`;
-                totalItem = m2 * (item.precioM2 || 0);
-            }
-            itemsHtml += `<tr style="border-bottom:1px solid #ddd;">
-                <td style="padding:10px 5px; text-align:center;">${idx+1}</td>
-                <td style="padding:10px 5px;">${desc}</td>
-                <td style="padding:10px 5px; text-align:center;">${cantidad}</td>
-                <td style="padding:10px 5px; text-align:right;">${precio}</td>
-                <td style="padding:10px 5px; text-align:right; font-weight:bold;">S/ ${totalItem.toFixed(2)}</td>
-             </tr>`;
-        });
-        
-        const pdfHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head><meta charset="UTF-8"><title>Cotización LUTHIPLAST</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: white; }
-            .container { max-width: 1000px; margin: 0 auto; }
-            .header { text-align: center; margin-bottom: 20px; }
-            .header h1 { color: #2a419f; margin: 0; font-size: 24px; }
-            .header p { margin: 5px 0; font-size: 12px; color: #555; }
-            .info-row { display: flex; justify-content: space-between; margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; }
-            .info-box p { margin: 5px 0; font-size: 12px; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th { background: #2a419f; color: white; padding: 12px; text-align: center; font-size: 12px; }
-            td { padding: 10px; font-size: 11px; }
-            .totales { text-align: right; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
-            .totales p { margin: 5px 0; font-size: 14px; }
-            .total-final { font-size: 20px; font-weight: bold; color: #2a419f; border-top: 2px solid #ccc; padding-top: 10px; margin-top: 10px; }
-            .terms { margin-top: 30px; padding: 15px; background: #fff8e1; border-left: 4px solid #ffc107; font-size: 11px; }
-            .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #777; border-top: 1px solid #ddd; padding-top: 15px; }
-            .signature { margin-top: 30px; display: flex; justify-content: space-between; }
-            .sign-line { border-top: 1px solid #000; width: 200px; margin-top: 30px; text-align: center; font-size: 10px; }
-        </style>
-        </head>
-        <body>
-        <div class="container">
-            <div class="header">
-                <h1>IMPORTACIONES LUTHIPLAST EIRL</h1>
-                <p>Magadalena Del Mar - Lima | Web: www.luthiplast.com | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com</p>
-                <p><strong>Asesor de venta:</strong> Miguel Zegarra Ayala</p>
+        <div class="info-row">
+            <div class="info-box">
+                <p><strong>FECHA:</strong> ${fecha}</p>
+                <p><strong>COTIZACIÓN #:</strong> ${numCotizacion}</p>
+                <p><strong>VALIDO HASTA:</strong> ${fechaVencimiento}</p>
             </div>
-            
-            <div class="info-row">
-                <div class="info-box">
-                    <p><strong>FECHA:</strong> ${fecha}</p>
-                    <p><strong>COTIZACIÓN #:</strong> ${numCotizacion}</p>
-                    <p><strong>VALIDO HASTA:</strong> ${fechaVencimiento}</p>
-                </div>
-                <div class="info-box">
-                    <p><strong>CLIENTE:</strong> _________________________</p>
-                </div>
-            </div>
-            
-            <table>
-                <thead><tr><th>#</th><th>DESCRIPCIÓN</th><th>CANTIDAD</th><th>PRECIO UNIT.</th><th>SUBTOTAL</th></tr></thead>
-                <tbody>${itemsHtml || '<tr><td colspan="5" style="text-align:center;">Sin items</td></tr>'}</tbody>
-            </table>
-            
-            <div class="totales">
-                <p><strong>SUBTOTAL:</strong> S/ ${subtotal.toFixed(2)}</p>
-                <p><strong>I.G.V. (18%):</strong> S/ ${igv.toFixed(2)}</p>
-                <div class="total-final"><strong>TOTAL:</strong> S/ ${total.toFixed(2)}</div>
-            </div>
-            
-            <div class="terms">
-                <strong>TÉRMINOS Y CONDICIONES</strong><br>
-                1.- El pago se realizará: 60% de adelanto / 40% a la entrega de la obra<br>
-                2.- Abonar en la Cta. Cte. N° 191-2650527-0-98 CCI: 00219100265052709858 Banco de la Nación<br>
-                3.- Tiempo de elaboración e instalación: 5 días útiles<br>
-                <br>
-                <strong>La aceptación del cliente (firma a continuación)</strong><br>
-                Nombre del cliente: _________________________ Firma: _________________________
-            </div>
-            
-            <div class="signature">
-                <div class="sign-line">_________________________<br>ASESOR DE VENTAS</div>
-                <div class="sign-line">_________________________<br>CLIENTE</div>
-            </div>
-            
-            <div class="footer">
-                Si usted tiene alguna pregunta sobre esta cotización, por favor, póngase en contacto con nosotros.<br>
-                IMPORTACIONES LUTHIPLAST EIRL | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com<br>
-                ¡Gracias por hacer negocios con nosotros!
+            <div class="info-box">
+                <p><strong>CLIENTE:</strong> _________________________</p>
             </div>
         </div>
-        </body>
-        </html>
-        `;
         
-        const pdfContainer = document.createElement('div');
-        pdfContainer.style.position = 'absolute';
-        pdfContainer.style.top = '-9999px';
-        pdfContainer.innerHTML = pdfHtml;
-        document.body.appendChild(pdfContainer);
+        <table>
+            <thead><tr><th>#</th><th>DESCRIPCIÓN</th><th>CANTIDAD</th><th>PRECIO UNIT.</th><th>SUBTOTAL</th></tr></thead>
+            <tbody>${itemsHtml || '<tr><td colspan="5" style="text-align:center;">Sin items</td></tr>'}</tbody>
+        </table>
         
-        try {
-            const canvas = await html2canvas(pdfContainer, { scale: 2.5, backgroundColor: '#ffffff' });
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = 210;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-            pdf.save(`Cotizacion_LUTHIPLAST_${numCotizacion}.pdf`);
-        } catch(err) { alert('Error al generar PDF'); }
-        finally { document.body.removeChild(pdfContainer); }
+        <div class="totales">
+            <p><strong>SUBTOTAL:</strong> S/ ${subtotal.toFixed(2)}</p>
+            <p><strong>I.G.V. (18%):</strong> S/ ${igv.toFixed(2)}</p>
+            <div class="total-final"><strong>TOTAL:</strong> S/ ${total.toFixed(2)}</div>
+        </div>
+        
+        <div class="terms">
+            <strong>TÉRMINOS Y CONDICIONES</strong><br>
+            1.- El pago se realizará: 60% de adelanto / 40% a la entrega de la obra<br>
+            2.- Abonar en la Cta. Cte. N° 191-2650527-0-98 CCI: 00219100265052709858 Banco de la Nación<br>
+            3.- Tiempo de elaboración e instalación: 5 días útiles<br>
+            <br>
+            <strong>La aceptación del cliente (firma a continuación)</strong><br>
+            Nombre del cliente: _________________________ Firma: _________________________
+        </div>
+        
+        <div class="signature">
+            <div class="sign-line">_________________________<br>ASESOR DE VENTAS</div>
+            <div class="sign-line">_________________________<br>CLIENTE</div>
+        </div>
+        
+        <div class="footer">
+            Si usted tiene alguna pregunta sobre esta cotización, por favor, póngase en contacto con nosotros.<br>
+            IMPORTACIONES LUTHIPLAST EIRL | Teléfono: 992 753 053 | E-mail: miguel@luthiplast.com<br>
+            ¡Gracias por hacer negocios con nosotros!
+        </div>
+    </div>
+    </body>
+    </html>
+    `;
+    
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.position = 'absolute';
+    pdfContainer.style.top = '-9999px';
+    pdfContainer.innerHTML = pdfHtml;
+    document.body.appendChild(pdfContainer);
+    
+    try {
+        const canvas = await html2canvas(pdfContainer, { scale: 2.5, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`Cotizacion_LUTHIPLAST_${numCotizacion}.pdf`);
+    } catch(err) { 
+        alert('Error al generar PDF: ' + err.message); 
+    } finally { 
+        document.body.removeChild(pdfContainer); 
     }
+}
     
     function init() {
         items = [{ id: nextId++, tipo: "unit", descripcion: "Ventana corrediza ALU-4000", precioUnitario: 520, cantidad: 2, itemTotal: 1040 }];

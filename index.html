@@ -670,58 +670,282 @@
     }
     
     // ---------- Generar PDF con diseño profesional (html2canvas + jsPDF) ----------
-    async function generatePDF() {
-        const element = document.querySelector(".card");
-        const originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
+    // ---------- Generar PDF con diseño profesional tipo factura ----------
+async function generatePDF() {
+    // Crear un elemento contenedor para el PDF (no visible)
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.position = 'absolute';
+    pdfContainer.style.top = '-9999px';
+    pdfContainer.style.left = '-9999px';
+    pdfContainer.style.backgroundColor = 'white';
+    pdfContainer.style.fontFamily = 'Inter, sans-serif';
+    pdfContainer.style.padding = '40px';
+    pdfContainer.style.width = '800px';
+    pdfContainer.style.boxShadow = 'none';
+    
+    // Obtener datos actuales
+    const subtotal = parseFloat(document.getElementById("subtotalVal").innerText);
+    const igv = parseFloat(document.getElementById("igvVal").innerText);
+    const total = parseFloat(document.getElementById("totalVal").innerText);
+    const fecha = new Date().toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+    const numeroCotizacion = `COT-${fecha.split('/').join('')}-${Math.floor(Math.random() * 1000)}`;
+    
+    // Construir HTML del PDF profesional
+    let itemsHtml = '';
+    items.forEach((item, idx) => {
+        let descripcion = item.descripcion || 'Producto sin descripción';
+        let cantidad = '';
+        let precioUnitario = '';
+        let totalItem = 0;
         
-        const cloneCard = element.cloneNode(true);
-        cloneCard.style.width = "800px";
-        cloneCard.style.margin = "0 auto";
-        cloneCard.style.padding = "20px";
-        cloneCard.style.background = "white";
-        cloneCard.style.boxShadow = "none";
-        cloneCard.style.borderRadius = "0px";
-        
-        const pdfContainer = document.createElement('div');
-        pdfContainer.style.position = 'absolute';
-        pdfContainer.style.top = '-9999px';
-        pdfContainer.style.left = '-9999px';
-        pdfContainer.appendChild(cloneCard);
-        document.body.appendChild(pdfContainer);
-        
-        try {
-            const canvas = await html2canvas(cloneCard, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false,
-                useCORS: false
-            });
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgWidth = 210;
-            const pageHeight = 297;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            let position = 0;
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            let remainingHeight = imgHeight;
-            let currentPosition = -pageHeight;
-            while (remainingHeight > pageHeight) {
-                currentPosition -= pageHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, currentPosition, imgWidth, imgHeight);
-                remainingHeight -= pageHeight;
-            }
-            pdf.save(`Cotizacion_LUTHIPLAST_${new Date().toISOString().slice(0,19)}.pdf`);
-        } catch (err) {
-            console.error(err);
-            alert("Error al generar PDF, intenta nuevamente");
-        } finally {
-            document.body.removeChild(pdfContainer);
-            document.body.style.overflow = originalOverflow;
+        if (item.tipo === 'unit') {
+            const precio = parseFloat(item.precioUnitario) || 0;
+            const cant = parseFloat(item.cantidad) || 0;
+            cantidad = `${cant} und`;
+            precioUnitario = `S/ ${precio.toFixed(2)}`;
+            totalItem = precio * cant;
+        } else {
+            const largo = parseFloat(item.largo) || 0;
+            const ancho = parseFloat(item.ancho) || 0;
+            const m2 = largo * ancho;
+            const precioM2 = parseFloat(item.precioM2) || 0;
+            cantidad = `${largo.toFixed(2)}m × ${ancho.toFixed(2)}m = ${m2.toFixed(2)} m²`;
+            precioUnitario = `S/ ${precioM2.toFixed(2)}/m²`;
+            totalItem = m2 * precioM2;
         }
+        
+        itemsHtml += `
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+                <td style="padding: 12px 8px; text-align: center;">${idx + 1}</td>
+                <td style="padding: 12px 8px;">${descripcion}</td>
+                <td style="padding: 12px 8px; text-align: right;">${precioUnitario}</td>
+                <td style="padding: 12px 8px; text-align: center;">${cantidad}</td>
+                <td style="padding: 12px 8px; text-align: right; font-weight: 600;">S/ ${totalItem.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+    
+    const pdfHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+                    background: white;
+                    padding: 20px;
+                }
+                .invoice {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    background: white;
+                }
+                /* Header con membrete */
+                .header-pdf {
+                    background: linear-gradient(135deg, #2a419f 0%, #1f327a 100%);
+                    color: white;
+                    padding: 30px;
+                    border-radius: 16px 16px 0 0;
+                    margin-bottom: 30px;
+                }
+                .header-pdf h1 {
+                    font-size: 28px;
+                    margin-bottom: 5px;
+                    letter-spacing: 2px;
+                }
+                .header-pdf p {
+                    opacity: 0.9;
+                    font-size: 14px;
+                }
+                .cotizacion-info {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 30px;
+                    padding: 20px;
+                    background: #f8fafd;
+                    border-radius: 12px;
+                    border-left: 4px solid #2a419f;
+                }
+                .info-box p {
+                    margin: 5px 0;
+                    font-size: 13px;
+                    color: #333;
+                }
+                .info-box strong {
+                    color: #2a419f;
+                }
+                .title-cotizacion {
+                    font-size: 24px;
+                    color: #2a419f;
+                    font-weight: 700;
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #d1e1fa;
+                    padding-bottom: 10px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                th {
+                    background: #2a419f;
+                    color: white;
+                    padding: 12px 8px;
+                    font-weight: 600;
+                    font-size: 13px;
+                }
+                td {
+                    padding: 10px 8px;
+                    font-size: 13px;
+                }
+                .totales {
+                    margin-top: 30px;
+                    text-align: right;
+                    padding: 20px;
+                    background: #f8fafd;
+                    border-radius: 12px;
+                }
+                .totales p {
+                    margin: 8px 0;
+                    font-size: 14px;
+                }
+                .total-final-pdf {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #2a419f;
+                    border-top: 2px solid #d1e1fa;
+                    padding-top: 10px;
+                    margin-top: 10px;
+                }
+                .footer-pdf {
+                    margin-top: 40px;
+                    text-align: center;
+                    padding-top: 20px;
+                    border-top: 1px solid #e0e0e0;
+                    font-size: 11px;
+                    color: #888;
+                }
+                .nota {
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #fff8e1;
+                    border-left: 3px solid #ffc107;
+                    font-size: 11px;
+                    color: #856404;
+                    border-radius: 8px;
+                }
+                .igv-note {
+                    font-size: 11px;
+                    color: #666;
+                    margin-top: 5px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="invoice">
+                <div class="header-pdf">
+                    <h1>LUTHIPLAST</h1>
+                    <p>Instalación profesional de ventanas y mamparas de aluminio</p>
+                    <p>RUC: 20601234567 | Tel: (01) 234 5678 | ventas@luthiplast.com</p>
+                </div>
+                
+                <div class="cotizacion-info">
+                    <div class="info-box">
+                        <p><strong>📄 N° Cotización:</strong> ${numeroCotizacion}</p>
+                        <p><strong>📅 Fecha de emisión:</strong> ${fecha}</p>
+                        <p><strong>⏱ Válido hasta:</strong> ${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString('es-PE')}</p>
+                    </div>
+                    <div class="info-box">
+                        <p><strong>👤 Cliente:</strong> _________________________</p>
+                        <p><strong>📧 Email:</strong> _________________________</p>
+                        <p><strong>📞 Teléfono:</strong> _________________________</p>
+                    </div>
+                </div>
+                
+                <div class="title-cotizacion">
+                    DETALLE DE COTIZACIÓN
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">#</th>
+                            <th style="text-align: left;">Descripción</th>
+                            <th style="text-align: right;">Precio Unitario</th>
+                            <th style="text-align: center;">Cantidad / Medida</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml || '<tr><td colspan="5" style="text-align:center; padding:40px;">Sin items registrados</td></tr>'}
+                    </tbody>
+                </table>
+                
+                <div class="totales">
+                    <p><strong>Subtotal:</strong> S/ ${subtotal.toFixed(2)}</p>
+                    <p><strong>IGV (18%):</strong> S/ ${igv.toFixed(2)}</p>
+                    <p class="total-final-pdf"><strong>TOTAL:</strong> S/ ${total.toFixed(2)}</p>
+                    <p class="igv-note">*Precios incluyen IGV. Afecto al 18% según Ley Peruana.</p>
+                </div>
+                
+                <div class="nota">
+                    <strong>📌 Notas importantes:</strong><br>
+                    • Los precios incluyen instalación profesional.<br>
+                    • Garantía de 3 años en materiales y 1 año en instalación.<br>
+                    • Tiempo de entrega: 10-15 días hábiles después de la confirmación.<br>
+                    • Formas de pago: Depósito bancario, transferencia o efectivo.
+                </div>
+                
+                <div class="footer-pdf">
+                    <p>LUTHIPLAST - Especialistas en ventanas y mamparas de aluminio</p>
+                    <p>Av. Principal 123, San Isidro, Lima - Perú | www.luthiplast.com</p>
+                    <p>Documento generado electrónicamente - Válido como cotización oficial</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    pdfContainer.innerHTML = pdfHtml;
+    document.body.appendChild(pdfContainer);
+    
+    try {
+        const canvas = await html2canvas(pdfContainer, {
+            scale: 2.5,
+            backgroundColor: '#ffffff',
+            logging: false,
+            useCORS: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let position = 0;
+        
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        let remainingHeight = imgHeight;
+        let currentPosition = -pageHeight;
+        
+        while (remainingHeight > pageHeight) {
+            currentPosition -= pageHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, currentPosition, imgWidth, imgHeight);
+            remainingHeight -= pageHeight;
+        }
+        
+        pdf.save(`LUTHIPLAST_Cotizacion_${numeroCotizacion}.pdf`);
+    } catch (err) {
+        console.error('Error:', err);
+        alert('Error al generar el PDF. Intente nuevamente.');
+    } finally {
+        document.body.removeChild(pdfContainer);
     }
+}
     
     // inicializadores + eventos
     function init() {
